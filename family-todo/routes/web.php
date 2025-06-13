@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\PostController;
 
 
 Route::get('/', function () {
@@ -26,7 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
-    Route::get('/feed', [PostController::class, 'index'])->name('feed');
+    Route::get('/feed', [PostController::class, 'index'])->name('feed')->middleware(['auth', 'verified']);
 
 });
 
