@@ -11,9 +11,9 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
+            //'user_id' => 'required',
             'post_id' => 'required|exists:posts,id',
-            'content' => 'required|string|max:500',
+            'content' => 'required|string|max:1000',
         ]);
 
         Comment::create([
@@ -22,6 +22,6 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        return redirect()->back();
+        return back();
     }
 }

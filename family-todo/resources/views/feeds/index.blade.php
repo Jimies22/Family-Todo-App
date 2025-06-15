@@ -27,14 +27,34 @@
                         <!-- Inside each $post loop -->
 
                         <!-- Comment List -->
-                        <div class="mt-3 ml-4 border-l pl-4">
+                        <!-- <div class="mt-3 ml-4 border-l pl-4">
                             <h4 class="text-sm font-semibold text-gray-600 mb-2">Comments:</h4>
                             @foreach ($post->comments as $comment)
                                 <p class="text-sm text-gray-800 mb-1">
                                     <strong>{{ $comment->user->name }}:</strong> {{ $comment->content }}
                                 </p>
                             @endforeach
+                        </div> -->
+                        <!-- Toggle Comments -->
+                        <div x-data="{ showComments: false }" class="ml-4 mt-2">
+                            <button @click="showComments = !showComments" class="text-sm text-blue-600 hover:underline">
+                                <span x-show="!showComments">💬 View Comments ({{ $post->comments->count() }})</span>
+                                
+                                <span x-show="showComments">🙈 Hide Comments</span>
+                            </button>
+
+                            <div x-show="showComments" x-transition class="mt-2 border-l pl-4">
+                                <h4 class="text-sm font-semibold text-gray-600 mb-2">Comments:</h4>
+                                @forelse ($post->comments as $comment)
+                                    <p class="text-sm text-gray-800 mb-1">
+                                        <strong>{{ $comment->user->name }}:</strong> {{ $comment->content }}
+                                    </p>
+                                @empty
+                                    <p class="text-gray-500 text-sm">No comments yet.</p>
+                                @endforelse
+                            </div>
                         </div>
+
 
                         <!-- Comment Form -->
                         <form action="{{ route('comments.store') }}" method="POST" class="mt-2 ml-4">

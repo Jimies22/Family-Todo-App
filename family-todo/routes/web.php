@@ -37,6 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Route::post('/react', [ReactionController::class, 'react'])->name('reactions.react');
     Route::post('/react', [ReactionController::class, 'react'])->name('reactions.react')->middleware(['auth']);
 
+    
+
     //Route::patch('/posts/{post}/task/{index}', [PostController::class, 'markTaskDone'])->name('posts.markTaskDone'); // update task status in post
     // Route::delete('/posts/{post}/task/{index}', [PostController::class, 'removeTask'])->name('posts.removeTask'); // remove task from post
     // Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit'); // edit post

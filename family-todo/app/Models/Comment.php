@@ -15,5 +15,6 @@ public function post()
 {
     return $this->belongsTo(Post::class);
 }
+protected $fillable = ['user_id', 'post_id', 'content'];
 
 }
