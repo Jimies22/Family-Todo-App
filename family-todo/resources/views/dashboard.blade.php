@@ -87,14 +87,26 @@
                 </table>
             </div>
 
-            <!-- Add Task Button -->
-            <div>
-                <a href="{{ route('tasks.create') }}"
-                   class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700">
-                    + Add New Task
-                </a>
+                            <!-- Add Task Button -->
+                            <div>
+                                <a href="{{ route('tasks.create') }}"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700">
+                                    + Add New Task
+                                </a>
+                            </div>
+                            <div>
+                                @if (count($tasks) > 0)
+                    <div>
+                        <form action="{{ route('posts.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="content" value="{{ $tasks->toJson() }}">
+                            <x-primary-button class="bg-purple-600 hover:bg-purple-700 mt-2">
+                                📤 Post to Feed
+                            </x-primary-button>
+                        </form>
+                    </div>
+                @endif
             </div>
-
         </div>
 
     </div>

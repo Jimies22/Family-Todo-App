@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests; // ??
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;// ??
 use App\Models\Task; // Make sure you have this model
+use App\Models\Post;
 
 class TaskController extends Controller
 {
@@ -101,15 +102,15 @@ class TaskController extends Controller
     }
 
 
-    public function markDone(Task $task)
-    {
-        //$this->authorize('update', $task); // Optional: ensure user owns the task
+    // public function markDone(Task $task)
+    // {
+    //     //$this->authorize('update', $task); // Optional: ensure user owns the task
 
-        $task->is_done = true;
-        $task->save();
+    //     $task->is_done = true;
+    //     $task->save();
 
-        return redirect()->route('dashboard')->with('success', 'Task marked as done!');
-    }
+    //     return redirect()->route('dashboard')->with('success', 'Task marked as done!');
+    // }
 
     public function destroy(Task $task)
     {
@@ -119,4 +120,24 @@ class TaskController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Task deleted Successfully.');
     }
+
+    public function markDone(Task $task)
+{
+    //$this->authorize('update', $task); // optional
+
+    $task->is_done = true;
+    $task->save();
+
+    // 🟣 Update latest feed post for this user
+    $latestPost = Post::where('user_id', auth()->id())->latest()->first();
+    if ($latestPost) {
+        $latestTasks = Task::where('user_id', auth()->id())->get();
+        $latestPost->content = $latestTasks->toJson();
+        $latestPost->save();
+    }
+
+    return redirect()->back()->with('success', 'Task marked as done and feed updated.');
+}
+
+    
 }

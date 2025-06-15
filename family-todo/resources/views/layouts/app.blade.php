@@ -13,6 +13,9 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -32,5 +35,32 @@
                 {{ $slot }}
             </main>
         </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('.btn-react').on('click', function () {
+        const postId = $(this).data('post-id');
+        const type = $(this).data('type');
+
+        $.ajax({
+            url: '{{ route("reactions.react") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                post_id: postId,
+                type: type
+            },
+            success: function () {
+                // Refresh just the reaction count
+                $('#reaction-count-' + type + '-' + postId).load(location.href + ' #reaction-count-' + type + '-' + postId);
+            },
+            error: function (xhr) {
+                alert("Error reacting: " + xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+
     </body>
 </html>

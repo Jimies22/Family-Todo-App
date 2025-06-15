@@ -4,6 +4,10 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ReactionController;
+use App\Http\Controllers\Post;
+
 
 
 Route::get('/', function () {
@@ -28,6 +32,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
     Route::get('/feed', [PostController::class, 'index'])->name('feed')->middleware(['auth', 'verified']);
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+    //Route::post('/react', [ReactionController::class, 'react'])->name('reactions.react');
+    Route::post('/react', [ReactionController::class, 'react'])->name('reactions.react')->middleware(['auth']);
+
+    //Route::patch('/posts/{post}/task/{index}', [PostController::class, 'markTaskDone'])->name('posts.markTaskDone'); // update task status in post
+    // Route::delete('/posts/{post}/task/{index}', [PostController::class, 'removeTask'])->name('posts.removeTask'); // remove task from post
+    // Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit'); // edit post
+    // Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update'); // update post
+    // Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy'); // delete post
+
+
+
 
 });
 
