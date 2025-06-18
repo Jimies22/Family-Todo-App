@@ -29,19 +29,7 @@ class PostController extends Controller
         return redirect()->route('feed')->with('success', 'Posted to feed!');
     }
 
-    public function markTaskDone(Post $post, $index)
-    {
-        $this->authorize('update', $post); // Optional, for security
-
-        $tasks = json_decode($post->content);
-        if (isset($tasks[$index])) {
-            $tasks[$index]->is_done = true;
-            $post->content = json_encode($tasks);
-            $post->save();
-        }
-
-        return back();
-    }
+    
 
 
 }

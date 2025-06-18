@@ -48,7 +48,9 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = Task::where('user_id', auth()->id())->get();
+        $tasks = Task::where('user_id', auth()->id())
+        ->whereNull('archived_at') // only active tasks
+        ->get();
 
         $todayCount = $tasks->where('due_date', today())->count();
         $weekCount = $tasks->whereBetween('due_date', [now()->startOfWeek(), now()->endOfWeek()])->count();
@@ -121,23 +123,94 @@ class TaskController extends Controller
         return redirect()->route('dashboard')->with('success', 'Task deleted Successfully.');
     }
 
-    public function markDone(Task $task)
+//     public function markDone(Task $task)
+// {
+//     //$this->authorize('update', $task); // optional
+
+//     $task->is_done = true;
+//     $task->save();
+
+//     $task->update([
+//     'is_done' => true,
+//     'archived_at' => now(),
+//     ]);
+
+//     // 🟣 Update latest feed post for this user
+//     $latestPost = Post::where('user_id', auth()->id())->latest()->first();
+//     if ($latestPost) {
+//         $latestTasks = Task::where('user_id', auth()->id())->get();
+//         $latestPost->content = $latestTasks->toJson();
+//         $latestPost->save();
+//     }
+
+    
+
+//     return redirect()->back()->with('success', 'Task marked as done and feed updated.');
+
+//     $allTasksDone = Task::where('user_id', Auth::id())
+//     ->whereNull('archived_at')
+//     ->where('is_done', false)
+//     ->count() === 0;
+
+//     if ($allTasksDone) {
+//     // Optional: Reset dashboard or prompt new list
+//     // Could redirect to a fresh task list page
+//     return redirect()->route('dashboard')->with('success', 'All tasks are done! You can start a new list.');
+//     } else {
+//         return redirect()->back()->with('success', 'Task marked as done and feed updated.');
+//     }
+
+// }
+
+public function markDone(Task $task)
 {
-    //$this->authorize('update', $task); // optional
+    // Step 1: Mark task as done and archive it
+    $task->update([
+        'is_done' => true,
+        'archived_at' => now(),
+    ]);
 
-    $task->is_done = true;
-    $task->save();
-
-    // 🟣 Update latest feed post for this user
+    // Step 2: Update the latest feed post with only active (non-archived) tasks
     $latestPost = Post::where('user_id', auth()->id())->latest()->first();
     if ($latestPost) {
-        $latestTasks = Task::where('user_id', auth()->id())->get();
-        $latestPost->content = $latestTasks->toJson();
+        $activeTasks = Task::where('user_id', auth()->id())
+                           ->whereNull('archived_at')
+                           ->get();
+
+        $latestPost->content = $activeTasks->toJson(); // only active tasks posted
         $latestPost->save();
     }
 
-    return redirect()->back()->with('success', 'Task marked as done and feed updated.');
+    // Step 3: Check if there are any active (non-archived) and not-done tasks left
+    $allTasksDone = Task::where('user_id', auth()->id())
+        ->whereNull('archived_at')
+        ->where('is_done', false)
+        ->count() === 0;
+
+    if ($allTasksDone) {
+        return redirect()->route('dashboard')->with('success', '🎉 All tasks are done! Start fresh!');
+    }
+
+    return redirect()->back()->with('success', '✔️ Task marked as done and archived.');
 }
 
-    
+
+public function clearArchived()
+{
+    Task::where('user_id', auth()->id())
+        ->whereNotNull('archived_at')
+        ->delete();
+
+    return redirect()->route('dashboard')->with('success', 'Archived tasks cleared.');
+}
+public function archived()
+{
+    $archivedTasks = Task::whereNotNull('archived_at')
+                         ->where('user_id', auth()->id())
+                         ->latest('archived_at')
+                         ->get();
+
+    return view('tasks.archived', compact('archivedTasks'));
+}
+
 }

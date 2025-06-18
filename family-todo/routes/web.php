@@ -36,6 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
     //Route::post('/react', [ReactionController::class, 'react'])->name('reactions.react');
     Route::post('/react', [ReactionController::class, 'react'])->name('reactions.react')->middleware(['auth']);
+    Route::post('/tasks/clear-archived', [TaskController::class, 'clearArchived'])->name('tasks.clearArchived');
+    Route::get('/tasks/archived', [TaskController::class, 'archived'])->name('tasks.archived');
 
     
 
