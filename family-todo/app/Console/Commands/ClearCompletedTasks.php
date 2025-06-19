@@ -25,9 +25,14 @@ class ClearCompletedTasks extends Command
      */
     public function handle()
     {
-        //
-        Task::where('is_done', true)
-        ->whereNotNull('archived_at')
-        ->delete();
+        // Fix old data: archive all done tasks that are not yet archived
+        \App\Models\Task::where('is_done', true)
+            ->whereNull('archived_at')
+            ->update(['archived_at' => now()]);
+
+        // Existing clear logic
+        \App\Models\Task::where('is_done', true)
+            ->whereNotNull('archived_at')
+            ->delete();
     }
 }

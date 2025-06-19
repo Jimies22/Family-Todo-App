@@ -13,7 +13,7 @@
                 <h1 class="text-2xl font-semibold text-gray-800">
                     Hello, {{ Auth::user()->name }} 👋
                 </h1>
-                <p class="text-gray-600">Here’s what’s on your plate today.</p>
+                <p class="text-gray-600">Here's what's on your plate today.</p>
             </div>
 
             <!-- Clear Archived Tasks Button -->
@@ -36,7 +36,7 @@
                 <div class="bg-white shadow rounded-xl p-4 text-center">
                     <h2 class="text-lg font-bold text-gray-700">This Week</h2>
                     <p class="text-purple-600 text-xl font-semibold">{{ $weekCount }}</p>
-                </div>
+                </div>  
                 <div class="bg-white shadow rounded-xl p-4 text-center">
                     <h2 class="text-lg font-bold text-gray-700">Done</h2>
                     <p class="text-green-600 text-xl font-semibold">{{ $doneCount }}</p>
@@ -77,7 +77,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($tasks as $task)
+                            @forelse ($tasks->whereNull('archived_at') as $task)
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-4 py-3">{{ $task->title }}</td>
                                     <td class="px-4 py-3">{{ $task->due_date->format('M d, Y') }}</td>
