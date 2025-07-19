@@ -12,8 +12,9 @@ class Post extends Model
     }
 
     protected $fillable = [
-    'user_id',
-    'content',
+        'user_id',
+        'content',
+        'archived_at',
     ];
 
     public function comments()

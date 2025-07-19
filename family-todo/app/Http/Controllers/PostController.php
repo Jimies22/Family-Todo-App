@@ -11,7 +11,10 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::with('user')->latest()->get();
+        $posts = Post::with('user')
+            ->whereNull('archived_at')
+            ->latest()
+            ->get();
         return view('feeds.index', compact('posts'));
     }
 

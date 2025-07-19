@@ -91,27 +91,5 @@
         No to-do posts yet. Be the first to post!
     </div>
 @endforelse
-
-        <div>
-            @php $content = json_decode($post->content, true); @endphp
-
-            @if (is_array($content) && isset($content['message']))
-                <div class="bg-yellow-100 rounded p-4 mb-4">
-                    <p class="font-bold text-lg">{{ $content['message'] }}</p>
-                    <p>{{ $content['summary'] }}</p>
-
-                    @if (!empty($content['tasks']))
-                        <ul class="mt-2 list-disc pl-5 text-sm text-gray-700">
-                            @foreach ($content['tasks'] as $task)
-                                <li>{{ $task }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
-            @endif
-
-        
-
-        </div>
-            </div>
+    </div>
 </x-app-layout>

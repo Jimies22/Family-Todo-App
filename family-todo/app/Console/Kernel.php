@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         })->daily();
 
         $schedule->command('tasks:reset')->daily(); // or ->weekly()
+        $schedule->command('posts:archive')->daily(); // Archive posts older than 1 week
     }
 
     protected $commands = [
