@@ -6,7 +6,8 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ReactionController;
-use App\Http\Controllers\Post;
+use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -59,11 +60,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/tasks', [AdminController::class, 'tasks'])->name('admin.tasks');
     Route::get('/posts', [AdminController::class, 'posts'])->name('admin.posts');
 });
+
 
 
 require __DIR__.'/auth.php';
