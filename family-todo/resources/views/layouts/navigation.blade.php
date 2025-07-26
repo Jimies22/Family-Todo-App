@@ -17,6 +17,18 @@
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Admin Dashboard') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users*')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.tasks')" :active="request()->routeIs('admin.tasks')">
+                            {{ __('Tasks') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.posts')" :active="request()->routeIs('admin.posts*')">
+                            {{ __('Content') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.analytics')" :active="request()->routeIs('admin.analytics')">
+                            {{ __('Analytics') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('feed')" :active="request()->routeIs('feed')">
                             {{ __('Feed') }}
                         </x-nav-link>
@@ -86,6 +98,18 @@
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                     {{ __('Admin Dashboard') }}
                 </x-responsive-nav-link>
+                                        <x-responsive-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users*')">
+                            {{ __('Users') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('admin.tasks')" :active="request()->routeIs('admin.tasks')">
+                            {{ __('Tasks') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('admin.posts')" :active="request()->routeIs('admin.posts*')">
+                            {{ __('Content') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('admin.analytics')" :active="request()->routeIs('admin.analytics')">
+                            {{ __('Analytics') }}
+                        </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('feed')" :active="request()->routeIs('feed')">
                     {{ __('Feed') }}
                 </x-responsive-nav-link>

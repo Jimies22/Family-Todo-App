@@ -61,9 +61,31 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
+    // User management routes
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::get('/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
+    Route::post('/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
+    Route::get('/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::put('/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+    
+    // Enhanced Task management routes
     Route::get('/tasks', [AdminController::class, 'tasks'])->name('admin.tasks');
+    Route::patch('/tasks/{task}/toggle-archive', [AdminController::class, 'toggleTaskArchive'])->name('admin.tasks.toggle-archive');
+    
+    // Enhanced Content management routes
     Route::get('/posts', [AdminController::class, 'posts'])->name('admin.posts');
+    Route::get('/posts/create', [AdminController::class, 'createPost'])->name('admin.posts.create');
+    Route::post('/posts', [AdminController::class, 'storePost'])->name('admin.posts.store');
+    Route::get('/posts/{post}/edit', [AdminController::class, 'editPost'])->name('admin.posts.edit');
+    Route::put('/posts/{post}', [AdminController::class, 'updatePost'])->name('admin.posts.update');
+    Route::delete('/posts/{post}', [AdminController::class, 'deletePost'])->name('admin.posts.delete');
+    Route::patch('/posts/{post}/toggle-pin', [AdminController::class, 'togglePin'])->name('admin.posts.toggle-pin');
+    Route::patch('/posts/{post}/toggle-featured', [AdminController::class, 'toggleFeatured'])->name('admin.posts.toggle-featured');
+    
+    // Analytics and Reports
+    Route::get('/analytics', [AdminController::class, 'analytics'])->name('admin.analytics');
 });
 
 
