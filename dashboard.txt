@@ -15,3 +15,26 @@
         </div>
     </div>
 </x-app-layout> -->
+
+
+
+reaction code
+
+<form action="{{ route('reactions.react') }}" method="POST" class="mt-2">
+    @csrf
+    <input type="hidden" name="post_id" value="{{ $post->id }}">
+    
+    @foreach (['like' => '👍', 'love' => '❤️', 'haha' => '😂'] as $type => $emoji)
+        <button type="submit" name="type" value="{{ $type }}" class="mr-2 hover:scale-110">
+            {{ $emoji }}
+            <span class="text-xs text-gray-600">
+                {{ $post->reactions->where('type', $type)->count() }}
+            </span>
+        </button>
+
+
+        
+    @endforeach
+</form>
+
+            <!-- @if ($tasks->whereNull('archived_at')->count() == 0) -->
