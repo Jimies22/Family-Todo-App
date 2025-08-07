@@ -84,23 +84,35 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
-        //$this->authorize('update', $task); // Optional authorization
+        // Check if task exists and belongs to current user
+        if (!$task || $task->user_id !== auth()->id()) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Task not found or you are not authorized to edit it.');
+        }
+
         return view('tasks.edit', compact('task'));
     }
 
     // Update the task
     public function update(Request $request, Task $task)
     {
-        //$this->authorize('update', $task); // Optional
+        // Check if task exists and belongs to current user
+        if (!$task || $task->user_id !== auth()->id()) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Task not found or you are not authorized to update it.');
+        }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'due_date' => 'required|date',
         ]);
 
-        $task->update($validated);
-
-        return redirect()->route('dashboard')->with('success', 'Task updated successfully.');
+        try {
+            $task->update($validated);
+            return redirect()->route('dashboard')->with('success', 'Task updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update task. Please try again.');
+        }
     }
 
 
@@ -116,11 +128,20 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
-       // $this->authorize('delete', $task); // Optional
+        // Check if task exists and belongs to current user
+        if (!$task || $task->user_id !== auth()->id()) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Task not found or you are not authorized to delete it.');
+        }
 
-        $task->delete();
-
-        return redirect()->route('dashboard')->with('success', 'Task deleted Successfully.');
+        try {
+            $task->delete();
+            return redirect()->route('dashboard')
+                ->with('success', 'Task deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Failed to delete task. Please try again.');
+        }
     }
 
 //     public function markDone(Task $task)
@@ -164,34 +185,44 @@ class TaskController extends Controller
 
 public function markDone(Task $task)
 {
-    // Step 1: Mark task as done and archive it
-    $task->update([
-        'is_done' => true,
-        'archived_at' => now(),
-    ]);
-
-    // Step 2: Update the latest feed post with only active (non-archived) tasks
-    $latestPost = Post::where('user_id', auth()->id())->latest()->first();
-    if ($latestPost) {
-        $activeTasks = Task::where('user_id', auth()->id())
-                           ->whereNull('archived_at')
-                           ->get();
-
-        $latestPost->content = $activeTasks->toJson(); // only active tasks posted
-        $latestPost->save();
+    // Check if task exists and belongs to current user
+    if (!$task || $task->user_id !== auth()->id()) {
+        return redirect()->route('dashboard')
+            ->with('error', 'Task not found or you are not authorized to modify it.');
     }
 
-    // Step 3: Check if there are any active (non-archived) and not-done tasks left
-    $allTasksDone = Task::where('user_id', auth()->id())
-        ->whereNull('archived_at')
-        ->where('is_done', false)
-        ->count() === 0;
+    try {
+        // Step 1: Mark task as done and archive it
+        $task->update([
+            'is_done' => true,
+            'archived_at' => now(),
+        ]);
 
-    if ($allTasksDone) {
-        return redirect()->route('dashboard')->with('success', '🎉 All tasks are done! Start fresh!');
+        // Step 2: Update the latest feed post with only active (non-archived) tasks
+        $latestPost = Post::where('user_id', auth()->id())->latest()->first();
+        if ($latestPost) {
+            $activeTasks = Task::where('user_id', auth()->id())
+                               ->whereNull('archived_at')
+                               ->get();
+
+            $latestPost->content = $activeTasks->toJson(); // only active tasks posted
+            $latestPost->save();
+        }
+
+        // Step 3: Check if there are any active (non-archived) and not-done tasks left
+        $allTasksDone = Task::where('user_id', auth()->id())
+            ->whereNull('archived_at')
+            ->where('is_done', false)
+            ->count() === 0;
+
+        if ($allTasksDone) {
+            return redirect()->route('dashboard')->with('success', '🎉 All tasks are done! Start fresh!');
+        }
+
+        return redirect()->back()->with('success', '✔️ Task marked as done and archived.');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to mark task as done. Please try again.');
     }
-
-    return redirect()->back()->with('success', '✔️ Task marked as done and archived.');
 }
 
 

@@ -20,17 +20,18 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [TaskController::class, 'index'])->name('dashboard');
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
 
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     //Route::post('/tasks/{task}/done', [TaskController::class, 'markDone'])->name('tasks.done');
-    Route::patch('/tasks/{task}/done', [TaskController::class, 'markDone'])->name('tasks.markDone');
+    Route::patch('/tasks/{task}/done', [TaskController::class, 'markDone'])->name('tasks.markDone')->middleware('task.auth');
 
-    Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
-    Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit')->middleware('task.auth');
+    Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update')->middleware('task.auth');
 
 
-    Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy')->middleware('task.auth');
 
     Route::get('/feed', [PostController::class, 'index'])->name('feed')->middleware(['auth', 'verified']);
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');

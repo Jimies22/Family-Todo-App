@@ -8,6 +8,19 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
+            <!-- Success/Error Messages -->
+            @if (session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
+            @endif
+
             <!-- Welcome Message -->
             <div>
                 <h1 class="text-2xl font-semibold text-gray-800">
@@ -47,7 +60,7 @@
                 </div>
             </div>
 
-             @if ($tasks->whereNull('archived_at')->every->is_done)
+             @if ($pendingCount == 0 && $doneCount > 0)
 
                 <div class="text-center p-6 bg-green-100 rounded-lg">
                     🎉 All tasks completed! Start fresh!
@@ -77,25 +90,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($tasks->whereNull('archived_at') as $task)
+                            @forelse ($tasks->whereNull('archived_at')->where('is_done', false) as $task)
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-4 py-3">{{ $task->title }}</td>
                                     <td class="px-4 py-3">{{ $task->due_date->format('M d, Y') }}</td>
                                     <td class="px-4 py-3">
-                                        @if($task->is_done)
-                                            <span class="text-green-600 font-medium">Done</span>
-                                        @else
-                                            <span class="text-red-600 font-medium">Pending</span>
-                                        @endif
+                                        <span class="text-red-600 font-medium">Pending</span>
                                     </td>
                                     <td class="px-4 py-3 text-right space-x-2">
-                                        @if(!$task->is_done)
-                                            <form action="{{ route('tasks.markDone', $task) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button class="text-green-600 hover:underline">✔️ Done</button>
-                                            </form>
-                                        @endif
+                                        <form action="{{ route('tasks.markDone', $task) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button class="text-green-600 hover:underline">✔️ Done</button>
+                                        </form>
                                         <a href="{{ route('tasks.edit', $task) }}" class="text-blue-600 hover:underline">✏️ Edit</a>
                                         <form action="{{ route('tasks.destroy', $task) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this task?');">
                                             @csrf
@@ -106,7 +113,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-4 py-4 text-center text-gray-500">No tasks yet. Add one!</td>
+                                    <td colspan="4" class="px-4 py-4 text-center text-gray-500">No pending tasks. Add one!</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -114,16 +121,17 @@
                 </div>
             @endif
 
-            <!-- Add Task Button -->
-            <div>
-                <a href="{{ route('tasks.create') }}"
-                   class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700">
-                    + Add New Task
-                </a>
-            </div>
+            <!-- Add Task Button and Post to Feed - Only show when there are pending tasks -->
+            @if ($pendingCount > 0)
+                <!-- Add Task Button -->
+                <div>
+                    <a href="{{ route('tasks.create') }}"
+                       class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700">
+                        + Add New Task
+                    </a>
+                </div>
 
-            <!-- Post to Feed -->
-            @if ($tasks->count() > 0)
+                <!-- Post to Feed -->
                 <div>
                     <form action="{{ route('posts.store') }}" method="POST">
                         @csrf

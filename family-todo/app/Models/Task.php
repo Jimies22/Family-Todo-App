@@ -15,6 +15,15 @@ class Task extends Model
         'is_done' => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        static::addGlobalScope('user', function ($query) {
+            if (auth()->check()) {
+                $query->where('user_id', auth()->id());
+            }
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
