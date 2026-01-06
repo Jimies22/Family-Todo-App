@@ -28,6 +28,18 @@
                 </h1>
                 <p class="text-gray-600">Here's what's on your plate today.</p>
             </div>
+            @if ($tasks->count() === 0)
+    <div class="text-center p-6 bg-blue-50 rounded-lg">
+        📝 No tasks yet. Start by creating your first task.
+        <div class="mt-4">
+            <a href="{{ route('tasks.create') }}"
+               class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700">
+                ➕ Create First Task
+            </a>
+        </div>
+    </div>
+@endif
+
 
             <!-- Clear Archived Tasks Button -->
             <form method="POST" action="{{ route('tasks.clearArchived') }}">
