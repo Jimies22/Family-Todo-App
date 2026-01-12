@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests; // ??
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;// ??
-use App\Models\Task; // Make sure you have this model
+use App\Models\Task; 
 use App\Models\Post;
 
 class TaskController extends Controller

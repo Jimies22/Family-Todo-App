@@ -6,11 +6,11 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
-    protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,
-        'task.auth' => \App\Http\Middleware\TaskAuthorization::class,
-    ];
+    protected $middlewareAliases = [
+    'auth' => \App\Http\Middleware\Authenticate::class,
+    'admin' => \App\Http\Middleware\AdminMiddleware::class,
+    'task.auth' => \App\Http\Middleware\TaskAuthorization::class,
+];
 
     protected $middlewareGroups = [
         'web' => [
@@ -20,6 +20,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            
         ],
 
         'api' => [
