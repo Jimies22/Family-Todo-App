@@ -16,6 +16,11 @@
                 </div>
 
                 <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description (Optional)</label>
+                    <textarea name="description" id="description" rows="4" class="w-full border border-gray-300 p-2 rounded" placeholder="Add more details about your task..."></textarea>
+                </div>
+
+                <div class="mb-4">
                     <label for="due_date" class="block text-sm font-medium text-gray-700">Due Date</label>
                     <input type="date" name="due_date" id="due_date" class="w-full border border-gray-300 p-2 rounded" required>
                 </div>
