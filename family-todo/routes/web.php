@@ -7,6 +7,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FriendController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -40,6 +41,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/react', [ReactionController::class, 'react'])->name('reactions.react')->middleware(['auth']);
     Route::post('/tasks/clear-archived', [TaskController::class, 'clearArchived'])->name('tasks.clearArchived');
     Route::get('/tasks/archived', [TaskController::class, 'archived'])->name('tasks.archived');
+
+    // Friend routes
+    Route::post('/friends/request/{friendId}', [FriendController::class, 'sendRequest'])->name('friends.request');
+    Route::patch('/friends/accept/{friendshipId}', [FriendController::class, 'acceptRequest'])->name('friends.accept');
+    Route::delete('/friends/decline/{friendshipId}', [FriendController::class, 'declineRequest'])->name('friends.decline');
+    Route::delete('/friends/{friendId}', [FriendController::class, 'removeFriend'])->name('friends.remove');
+    Route::get('/friends', [FriendController::class, 'friends'])->name('friends.list');
+    Route::get('/friends/pending', [FriendController::class, 'pendingRequests'])->name('friends.pending');
 
     
 

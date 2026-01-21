@@ -16,8 +16,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        // Get friend suggestions for current user
+        $user = $request->user();
+        $users = $user->getFriendSuggestions();
+        
         return view('profile.edit', [
             'user' => $request->user(),
+            'users' => $users,
         ]);
     }
 

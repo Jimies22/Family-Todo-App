@@ -50,4 +50,54 @@ class User extends Authenticatable
     {
         return $this->hasMany(Task::class);
     }
+
+    // Friendships where this user sent the request
+    public function sentFriendRequests()
+    {
+        return $this->hasMany(Friendship::class, 'user_id');
+    }
+
+    // Friendships where this user received the request
+    public function receivedFriendRequests()
+    {
+        return $this->hasMany(Friendship::class, 'friend_id');
+    }
+
+    // Get all confirmed friends
+    public function friends()
+    {
+        return User::where(function ($query) {
+            // Friends where current user sent accepted request
+            $query->whereIn('id', 
+                Friendship::where('user_id', $this->id)
+                    ->where('status', 'accepted')
+                    ->pluck('friend_id')
+            );
+        })->orWhere(function ($query) {
+            // Friends where current user received accepted request
+            $query->whereIn('id',
+                Friendship::where('friend_id', $this->id)
+                    ->where('status', 'accepted')
+                    ->pluck('user_id')
+            );
+        });
+    }
+
+    // Get friend suggestions (users who are not friends yet)
+    public function getFriendSuggestions()
+    {
+        $friendIds = $this->friends()->pluck('id')->toArray();
+        $pendingIds = $this->sentFriendRequests()
+            ->where('status', 'pending')
+            ->pluck('friend_id')
+            ->toArray();
+        $receivedIds = $this->receivedFriendRequests()
+            ->where('status', 'pending')
+            ->pluck('user_id')
+            ->toArray();
+
+        $excludeIds = array_merge([$this->id], $friendIds, $pendingIds, $receivedIds);
+
+        return User::whereNotIn('id', $excludeIds)->get();
+    }
 }

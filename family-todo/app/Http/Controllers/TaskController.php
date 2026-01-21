@@ -56,8 +56,12 @@ class TaskController extends Controller
         $weekCount = $tasks->whereBetween('due_date', [now()->startOfWeek(), now()->endOfWeek()])->count();
         $doneCount = $tasks->where('is_done', true)->count();
         $pendingCount = $tasks->where('is_done', false)->count();
+        
+        // Get friend suggestions for current user
+        $user = auth()->user();
+        $users = $user->getFriendSuggestions();
 
-        return view('dashboard', compact('tasks', 'todayCount', 'weekCount', 'doneCount', 'pendingCount'));
+        return view('dashboard', compact('tasks', 'todayCount', 'weekCount', 'doneCount', 'pendingCount', 'users'));
     }
 
     public function create()

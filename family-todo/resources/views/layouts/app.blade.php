@@ -188,7 +188,7 @@
         <nav class="top-bar sticky top-0 z-50">
             <div class="max-w-[1400px] mx-auto px-4 h-16 flex items-center justify-between">
                 <!-- Logo -->
-                <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
+                <a href="{{ auth()->user()->is_admin ? route('admin.dashboard') : route('dashboard') }}" class="flex items-center space-x-2">
                     <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
                         <i class="fas fa-home text-red-500 text-xl"></i>
                     </div>
@@ -285,25 +285,27 @@
                 <!-- Right Sidebar -->
                 <aside class="sidebar sidebar-right hidden lg:block">
                     <div class="card p-4">
-                        <h3 class="font-bold text-gray-900 mb-3">Friends Online</h3>
-                        <div class="space-y-2">
-                            @for($i = 0; $i < 5; $i++)
-                                <div class="user-card flex items-center justify-between">
-                                    <div class="flex items-center space-x-2">
-                                        <div class="relative">
-                                            <img class="w-8 h-8 rounded-full" src="https://ui-avatars.com/api/?name=Friend%20{{ $i }}&background=random" alt="Friend">
-                                            <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                        <h3 class="font-bold text-gray-900 mb-3">Suggested Friends</h3>
+                        <div class="space-y-3">
+                            @forelse($users ?? [] as $user)
+                                <div class="user-card p-3 border border-gray-200 rounded-lg hover:shadow-md transition">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2 flex-1">
+                                            <img class="w-8 h-8 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random" alt="{{ $user->name }}">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-gray-900 truncate">{{ $user->name }}</p>
+                                                <p class="text-xs text-gray-500 truncate">{{ $user->email }}</p>
+                                            </div>
                                         </div>
-                                        <span class="text-sm font-medium text-gray-900">Friend {{ $i }}</span>
+                                        <button onclick="sendFriendRequest({{ $user->id }})" class="ml-2 px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition">
+                                            Add
+                                        </button>
                                     </div>
                                 </div>
-                            @endfor
+                            @empty
+                                <p class="text-sm text-gray-600 text-center py-4">No suggestions at the moment</p>
+                            @endforelse
                         </div>
-                    </div>
-
-                    <div class="card p-4 mt-4">
-                        <h3 class="font-bold text-gray-900 mb-3">Suggestions</h3>
-                        <p class="text-sm text-gray-600">No suggestions at the moment</p>
                     </div>
                 </aside>
             </div>
@@ -332,6 +334,25 @@
                     });
                 });
             });
+
+            // Friend request function
+            function sendFriendRequest(friendId) {
+                $.ajax({
+                    url: '{{ url('/friends/request') }}/' + friendId,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function (xhr) {
+                        const errorMessage = xhr.responseJSON?.message || 'Error sending friend request';
+                        alert(errorMessage);
+                    }
+                });
+            }
         </script>
     </body>
 </html>

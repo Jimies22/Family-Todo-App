@@ -22,7 +22,11 @@ class PostController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
             
-        return view('feeds.index', compact('posts'));
+        // Get friend suggestions for current user
+        $user = auth()->user();
+        $users = $user->getFriendSuggestions();
+            
+        return view('feeds.index', compact('posts', 'users'));
     }
 
     public function store(Request $request)
